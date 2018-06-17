@@ -1043,10 +1043,19 @@
     "url": "https://re-deploy.io",
     "startDate": "2018-08-16",
     "endDate": "2018-08-17",
-    "city": "San Francisco, CA",
+    "city": "Raleigh, NC",
     "country": "U.S.A.",
     "twitter": "@REdeployConf",
     "cfpUrl": "https://re-deploy.io/cfp/",
     "cfpEndDate": "2018-06-30"
+  },
+  {
+    "name": "All Things Open",
+    "url": "https://allthingsopen.org/",
+    "startDate": "2018-10-21",
+    "endDate": "2018-10-23",
+    "city": "San Francisco, CA",
+    "country": "U.S.A.",
+    "twitter": "@AllThingsOpen"
   }
 ]
