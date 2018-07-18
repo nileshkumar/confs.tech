@@ -1,5 +1,4 @@
-import * as React from 'react';
-import {Component} from 'react';
+import React, {Component} from 'react';
 import {filter, groupBy, sortBy as _sortBy} from 'lodash';
 import {isPast, parse, format} from 'date-fns';
 import {connectInfiniteHits} from 'react-instantsearch/connectors';
@@ -71,10 +70,9 @@ class ConferenceList extends Component<Props, never> {
 
 function groupAndSortConferences(
   conferences: Conference[],
-  sortBy = 'startDate'
+  sortBy = 'startDate',
 ) {
   // Group conferences by year
-  // FIXME: remove any
   const confs: any = groupBy(conferences, conf => format(conf[sortBy], 'YYYY'));
 
   // Group conferences by month within the year
@@ -83,7 +81,7 @@ function groupAndSortConferences(
     Object.keys(confs[year]).map(month => {
       confs[year][month] = _sortBy(
         confs[year][month],
-        conference => conference[sortBy]
+        conference => conference[sortBy],
       );
     });
   });

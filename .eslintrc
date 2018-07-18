@@ -1,19 +1,20 @@
 {
-  "extends": ["plugin:shopify/react", "plugin:jsx-a11y/recommended", "prettier"],
-  "plugins": ["jsx-a11y"],
+  "extends": [
+    "plugin:shopify/typescript-react",
+    "plugin:shopify/typescript-prettier"
+  ],
   "rules": {
-    "jsx-a11y/no-onchange": "off",
-    "sort-class-members/sort-class-members": "off",
+    "shopify/strict-component-boundaries": "off",
+    "jsx-a11y/label-has-for": "off",
     "react/prop-types": "off",
-    "array-callback-return": "off",
-    "no-process-env": "off",
-    "space-before-function-paren": ["error", {
-      "anonymous": "never",
-      "named": "never",
-      "asyncArrow": "always"
-    }],
-    "function-paren-newline": "off",
-    "react/no-typos": "off",
+    "babel/func-params-comma-dangle": "off",
+    "import/no-self-import": "off",
+    "import/no-useless-path-segments": "off",
+    "react/button-has-type": "off",
+    "react/jsx-child-element-spacing": "off",
+    "react/jsx-curly-brace-presence": "off",
+    "react/no-access-state-in-setstate": "off",
+    "react/no-this-in-sfc": "off",
     "react/no-unused-state": "off"
   }
 }

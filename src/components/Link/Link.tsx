@@ -11,7 +11,7 @@ interface Props {
   external?: boolean;
   routed?: boolean;
   button?: boolean;
-  onClick?(evt: any): void;
+  onClick?: (evt: any) => void;
 }
 
 export default class Link extends PureComponent<Props> {
@@ -24,7 +24,11 @@ export default class Link extends PureComponent<Props> {
 
     return (
       <RoutedLink
-        className={classNames(styles.Link, selected && styles.Selected, className)}
+        className={classNames(
+          styles.Link,
+          selected && styles.Selected,
+          className,
+        )}
         to={url || ''}
       >
         {this.props.children}
@@ -36,17 +40,22 @@ export default class Link extends PureComponent<Props> {
     const {onClick} = this.props;
 
     return (
-      <button
-        className={classNames(styles.Link)}
-        onClick={onClick}
-      >
+      <button className={classNames(styles.Link)} onClick={onClick}>
         {this.props.children}
       </button>
     );
   }
 
   render() {
-    const {url, external, onClick, selected, className, routed, button} = this.props;
+    const {
+      url,
+      external,
+      onClick,
+      selected,
+      className,
+      routed,
+      button,
+    } = this.props;
 
     if (routed) {
       return this.routedLink();
@@ -58,7 +67,11 @@ export default class Link extends PureComponent<Props> {
 
     return (
       <a
-        className={classNames(styles.Link, selected && styles.Selected, className)}
+        className={classNames(
+          styles.Link,
+          selected && styles.Selected,
+          className,
+        )}
         onClick={onClick}
         onTouchStart={onClick}
         target={external ? '_blank' : undefined}

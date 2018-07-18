@@ -17,9 +17,7 @@ export default class Heading extends PureComponent<Props> {
       <Element
         className={classNames(styles.Heading, styles[`Heading-${level || 1}`])}
       >
-        <span className={styles.Inner}>
-          {this.props.children}
-        </span>
+        <span className={styles.Inner}>{this.props.children}</span>
       </Element>
     );
   }

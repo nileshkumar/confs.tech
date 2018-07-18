@@ -29,7 +29,7 @@ export default class Select extends Component<Props, State> {
   renderOptions = () => {
     const {options} = this.props;
 
-    return options.map((option) => {
+    return options.map(option => {
       const [label, value] = option;
 
       return (

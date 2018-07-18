@@ -5,9 +5,9 @@ import styles from './Footer.scss';
 import Link from '../Link';
 
 interface Props {
-  showCFP: boolean;
-  showPast: boolean;
-  togglePast(evt: any): void;
+  showCFP: boolean,
+  showPast: boolean,
+  togglePast(evt: any): void,
 }
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -54,9 +54,9 @@ function Twitter(handle: string) {
 
 function getURL(showCFP: boolean) {
   if (showCFP) {
-    return `${location.pathname}`.replace('/cfp', '')
+    return `${location.pathname}`.replace('/cfp', '');
   } else {
-    return `/cfp${location.pathname}`
+    return `/cfp${location.pathname}`;
   }
 }
 
@@ -74,7 +74,7 @@ function HiddenLinks() {
               {`Open call for papers for ${topic} conferences in ${CURRENT_YEAR}`}
             </Link>
           </p>
-        )
+        );
       })}
     </div>
   );

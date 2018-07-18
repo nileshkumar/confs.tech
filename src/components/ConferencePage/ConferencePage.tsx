@@ -1,4 +1,4 @@
-/* global process */
+/* eslint-disable no-process-env */
 import React, {Component} from 'react';
 import Favicon from 'react-favicon';
 import {Helmet} from 'react-helmet';
@@ -39,8 +39,8 @@ type ComposedProps = Props &
   }>;
 
 interface SearchState {
-  country: string[],
-  topics: string[],
+  country: string[];
+  topics: string[];
 }
 
 interface State {
@@ -96,15 +96,15 @@ class ConferencePage extends Component<ComposedProps, State> {
         if (topics && country) {
           history.push(
             `${startURL}/${topics[0]}/${country[0]}?${qs.stringify(
-              queryParams
-            )}`
+              queryParams,
+            )}`,
           );
         } else if (topics) {
           history.push(`${startURL}/${topics[0]}?${qs.stringify(queryParams)}`);
         } else {
           history.push(`${startURL}/?${qs.stringify(queryParams)}`);
         }
-      }
+      },
     );
   };
 
