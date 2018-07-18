@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import styles from './Heading.scss';
 
 interface Props {
-  level: number;
+  level?: string | number;
   element: string;
 }
 

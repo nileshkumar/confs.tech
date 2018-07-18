@@ -4,6 +4,7 @@ import Favicon from 'react-favicon';
 import {Helmet} from 'react-helmet';
 import {orderBy} from 'lodash';
 import qs from 'qs';
+import {withRouter, RouteComponentProps} from 'react-router';
 
 import {
   Configure,
@@ -12,7 +13,6 @@ import {
   CurrentRefinements,
 } from 'react-instantsearch/dom';
 
-import {withRouter} from 'react-router';
 import styles from './ConferencePage.scss';
 import './RefinementList.scss';
 import './CurrentRefinement.scss';
@@ -28,11 +28,37 @@ const CURRENT_YEAR = new Date().getFullYear();
 const TODAY = Math.round(new Date().getTime() / 1000);
 const ONE_YEAR = 365 * 24 * 60 * 60;
 
-class ConferencePage extends Component {
-  state = {
+interface Props {
+  showCFP: boolean;
+}
+
+type ComposedProps = Props &
+  RouteComponentProps<{
+    topic: string;
+    country: string;
+  }>;
+
+interface SearchState {
+  country: string[],
+  topics: string[],
+}
+
+interface State {
+  hitsPerPage: number;
+  sortBy: string;
+  showPast: boolean;
+  refinementList: SearchState;
+}
+
+class ConferencePage extends Component<ComposedProps, State> {
+  state: State = {
     hitsPerPage: 150,
     sortBy: 'startDate',
     showPast: false,
+    refinementList: {
+      country: [],
+      topics: [],
+    },
   };
 
   togglePast = () => {
@@ -48,33 +74,46 @@ class ConferencePage extends Component {
     });
   };
 
-  onSearchStateChange = (searchState) => {
-    this.setState({
-      refinementList: searchState.refinementList || {},
-    }, () => {
-      const {match: {params}} = this.props;
-      const {refinementList: {country, topics}} = this.state;
-      const {history, showCFP} = this.props;
-      const startURL = showCFP ? '/cfp' : '';
-      const queryParams = {
-        topics: (topics || [params.topic]).join(QUERY_SEPARATOR),
-        countries: (country || [params.country]).join(QUERY_SEPARATOR)
-      };
+  onSearchStateChange = (searchState: {refinementList: SearchState}) => {
+    this.setState(
+      {
+        refinementList: searchState.refinementList || {},
+      },
+      () => {
+        const {
+          match: {params},
+        } = this.props;
+        const {
+          refinementList: {country, topics},
+        } = this.state;
+        const {history, showCFP} = this.props;
+        const startURL = showCFP ? '/cfp' : '';
+        const queryParams = {
+          topics: (topics || [params.topic]).join(QUERY_SEPARATOR),
+          countries: (country || [params.country]).join(QUERY_SEPARATOR),
+        };
 
-      if (topics && country) {
-        history.push(`${startURL}/${topics[0]}/${country[0]}?${qs.stringify(queryParams)}`);
-      } else if (topics) {
-        history.push(`${startURL}/${topics[0]}?${qs.stringify(queryParams)}`);
-      } else {
-        history.push(`${startURL}/?${qs.stringify(queryParams)}`);
+        if (topics && country) {
+          history.push(
+            `${startURL}/${topics[0]}/${country[0]}?${qs.stringify(
+              queryParams
+            )}`
+          );
+        } else if (topics) {
+          history.push(`${startURL}/${topics[0]}?${qs.stringify(queryParams)}`);
+        } else {
+          history.push(`${startURL}/?${qs.stringify(queryParams)}`);
+        }
       }
-    });
+    );
   };
 
   algoliaFilter = () => {
     const {showPast} = this.state;
     const {showCFP} = this.props;
-    let filters = showPast ? `startDateUnix>${TODAY - ONE_YEAR}` : `startDateUnix>${TODAY}`;
+    let filters = showPast
+      ? `startDateUnix>${TODAY - ONE_YEAR}`
+      : `startDateUnix>${TODAY}`;
     if (showCFP) {
       filters += String(` AND cfpEndDateUnix>${TODAY}`);
     }
@@ -83,16 +122,27 @@ class ConferencePage extends Component {
 
   loadMore = () => {
     this.setState({
-      hitsPerPage: (this.state.hitsPerPage + 50),
+      hitsPerPage: this.state.hitsPerPage + 50,
     });
   };
 
   render() {
     const {showPast, sortBy, hitsPerPage} = this.state;
-    const {showCFP, match: {params: {topic, country}}} = this.props;
+    const {
+      showCFP,
+      match: {
+        params: {topic, country},
+      },
+    } = this.props;
     const queryParams = qs.parse(location.search.replace('?', ''));
-    const topics = (queryParams.topics && queryParams.topics.split(QUERY_SEPARATOR) || topic && [topic] || []);
-    const countries = (queryParams.countries && queryParams.countries.split(QUERY_SEPARATOR) || country && [country] || []);
+    const topics =
+      (queryParams.topics && queryParams.topics.split(QUERY_SEPARATOR)) ||
+      (topic && [topic]) ||
+      [];
+    const countries =
+      (queryParams.countries && queryParams.countries.split(QUERY_SEPARATOR)) ||
+      (country && [country]) ||
+      [];
 
     return (
       <div>
@@ -103,11 +153,14 @@ class ConferencePage extends Component {
         <header className={styles.Header}>
           <div>
             <h1 className="visuallyHidden">
-              List of all {topic ? TOPICS[topic] : 'tech'} conferences of {CURRENT_YEAR}
+              List of all {topic ? TOPICS[topic] : 'tech'} conferences of{' '}
+              {CURRENT_YEAR}
               {country ? ` in ${country}` : null}
             </h1>
             <Heading element="p">Find your next tech conference</Heading>
-            <Heading element="h2" level="sub">Open-source and crowd-sourced conference website</Heading>
+            <Heading element="h2" level="sub">
+              Open-source and crowd-sourced conference website
+            </Heading>
           </div>
           <GithubStar />
         </header>
@@ -118,10 +171,7 @@ class ConferencePage extends Component {
           onSearchStateChange={this.onSearchStateChange}
           indexName={'prod_conferences'}
         >
-          <Configure
-            hitsPerPage={hitsPerPage}
-            filters={this.algoliaFilter()}
-          />
+          <Configure hitsPerPage={hitsPerPage} filters={this.algoliaFilter()} />
           <RefinementList
             limit={20}
             attribute="topics"
@@ -137,11 +187,14 @@ class ConferencePage extends Component {
             defaultRefinement={countries}
           />
 
-          <CurrentRefinements
-            transformItems={transformCurrentRefinements}
-          />
+          <CurrentRefinements transformItems={transformCurrentRefinements} />
 
-          {showCFP && <CfpHeader sortByCfpEndDate={this.sortByCfpEndDate} sortBy={sortBy} />}
+          {showCFP && (
+            <CfpHeader
+              sortByCfpEndDate={this.sortByCfpEndDate}
+              sortBy={sortBy}
+            />
+          )}
 
           <ConferenceList
             onLoadMore={this.loadMore}
@@ -160,44 +213,50 @@ class ConferencePage extends Component {
   }
 }
 
-function CfpHeader({sortByCfpEndDate, sortBy}) {
+interface CfpHeaderProps {
+  sortBy: string;
+  sortByCfpEndDate(evt: any): void;
+}
+
+function CfpHeader({sortByCfpEndDate, sortBy}: CfpHeaderProps) {
   return (
     <div className={styles.CfpHeader}>
-      <Heading element="h2" level={2}>Call for Papers</Heading>
-      <Link
-        button
-        onClick={sortByCfpEndDate}
-      >
-        {sortBy === 'startDate'
-          ? 'Start date ⬇'
-          : 'CFP end date ⬇'
-        }
+      <Heading element="h2" level={2}>
+        Call for Papers
+      </Heading>
+      <Link button onClick={sortByCfpEndDate}>
+        {sortBy === 'startDate' ? 'Start date ⬇' : 'CFP end date ⬇'}
       </Link>
     </div>
   );
 }
 
-function transformTopicRefinements(items) {
-  items.map((item) => {
+interface Item {
+  label: string;
+  attribute: string;
+  items: Item[];
+}
+
+function transformTopicRefinements(items: Item[]) {
+  items.map(item => {
     item.label = TOPICS[item.label];
     return item;
   });
   return orderBy(items, ['count', 'name'], ['desc', 'desc']);
 }
 
-function transformCountryRefinements(items) {
+function transformCountryRefinements(items: Item[]) {
   return orderBy(items, ['count', 'name'], ['desc', 'desc']);
 }
 
-function transformCurrentRefinements(items) {
+function transformCurrentRefinements(items: Item[]) {
   if (items.length && items[0].attribute === 'topics') {
-    items[0].items.map((item) => {
+    items[0].items.map(item => {
       item.label = TOPICS[item.label] || item.label;
       return item;
     });
   }
   return items;
-
 }
 
 export default withRouter(ConferencePage);

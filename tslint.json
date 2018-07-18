@@ -1,0 +1,19 @@
+{
+  "extends": ["tslint-config-shopify", "tslint-config-shopify/react"],
+  "rules": {
+    "jsx-no-lambda": false,
+    "jsx-use-translation-function": false,
+    "no-for-in-array": false,
+    "no-inferred-empty-object-type": false,
+    "prefer-function-over-method": false,
+    "restrict-plus-operands": false,
+    "variable-name": [
+      true,
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case",
+      "allow-snake-case",
+      "ban-keywords"
+    ]
+  }
+}
